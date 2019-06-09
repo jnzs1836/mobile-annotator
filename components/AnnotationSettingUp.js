@@ -5,7 +5,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 
 
 
-export default class AnnotationSettingUp extends Component {
+export default class AnnotationTableSingle1 extends Component {
 
     constructor(props) {
         super(props);
