@@ -12,6 +12,10 @@ const initialTable = {
             fifthStrokeLaterScore: 0,
             fifthStrokeLaterLose: 0,
         },
+    metaData:{
+        place: "未设定"
+    },
+    status: "SETTING_UP"
 };
 
 const annotatingTable1 = (state = initialTable , action) => {
@@ -30,6 +34,20 @@ const annotatingTable1 = (state = initialTable , action) => {
       //  Init the table and set relevant states
       case "INIT_TABLE_ONE":
           return initialTable;
+      case "SET_UP_TABLE":
+          return {
+              ...initialTable,
+              metaData:{
+                  ...action.settings
+              },
+              status: "ANNOTATING",
+          };
+
+      case "BACK_TO_SETTING_UP":
+          return {
+              ...state,
+              status: "SETTING_UP"
+          };
       default:
           return state
 

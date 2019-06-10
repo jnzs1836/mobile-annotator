@@ -1,6 +1,5 @@
-const annotationList = (state = [], action) => {
+const user = (state = [], action) => {
   switch (action.type) {
-      // mutate table
       case "REMOVE_ONE":
         return {
             ...state,
@@ -11,9 +10,13 @@ const annotationList = (state = [], action) => {
 
 };
 
-export default annotationList;
+
+
+
+export default user;
 
 
 sampleState = {
-    list:[],
+    name: "sample",
+    credential: "sample"
 }

@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
-import {View, Text,  StyleSheet, Alert, Picker, TextInput} from 'react-native';
+import {View, Text,  StyleSheet, Alert, Picker, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import { Divider,  Input, Button } from 'react-native-elements';
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { addOneInTable1, initTableOne, setUpTable } from "../actions/annotatingTable1";
+import { connect } from "react-redux";
 
 
 
-export default class AnnotationTableSingle1 extends Component {
+class AnnotationSettingUp extends Component {
 
     constructor(props) {
         super(props);
@@ -24,7 +26,10 @@ export default class AnnotationTableSingle1 extends Component {
             entry:"",
             round:"",
             playerA1:"运动员A1",
-            playerB1:"",
+            playerB1: "运动员B1",
+            playerA2: "运动员A2",
+            playerB2: "运动员B2",
+            ...this.props.previousData,
         };
     }
 
@@ -48,9 +53,8 @@ export default class AnnotationTableSingle1 extends Component {
             return false;
         }
     }
-    handleSubmit(event) {
-        this.setState({value: event.target.value});
-
+    _onSubmit = () => {
+        this.props.submitSettingUp(this.state);
     }
 
     showDateTimePicker = () => {
@@ -78,22 +82,22 @@ export default class AnnotationTableSingle1 extends Component {
         if(this._isSingleGame()){
             playersInput = <View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         A方运动员1
                     </Text>
                     <Input
-                        label="A方运动员1"
-                        placeholder='运动员A1'
+                        style={styles.input}
+                        placeholder={this.props.previousData.playerA1}
                         onChangeText={(text)=>this.setState({playerA1:text})}
                     />
                 </View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         B方运动员1
                     </Text>
                     <Input
-                        label="B方运动员1"
-                        placeholder='运动员B1'
+                        style={styles.playerInput}
+                        placeholder={this.props.previousData.playerB1}
                         onChangeText={(text)=>this.setState({playerB1:text})}
                     />
                 </View>
@@ -101,45 +105,45 @@ export default class AnnotationTableSingle1 extends Component {
         }else{
             playersInput = <View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         A方运动员1
                     </Text>
                     <Input
-                        label="A方运动员1"
-                        placeholder='运动员A1'
+                        style={styles.playerInput}
+                        placeholder={this.props.previousData.playerA1}
                         onChangeText={(text)=>this.setState({playerA1:text})}
 
 
                     />
                 </View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         A方运动员2
                     </Text>
                     <Input
-                        label="A方运动员2"
-                        placeholder='运动员A2'
+                        style={styles.playerInput}
+                        placeholder={this.props.previousData.playerA2}
                         onChangeText={(text)=>this.setState({playerA2:text})}
 
                     />
                 </View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         B方运动员1
                     </Text>
                     <Input
-                        label="B方运动员1"
-                        placeholder='运动员B1'
+                        style={styles.playerInput}
+                        placeholder={this.props.previousData.playerB1}
                         onChangeText={(text)=>this.setState({playerB1:text})}
                     />
                 </View>
                 <View style={styles.row}>
-                    <Text>
+                    <Text style={styles.label}>
                         B方运动员2
                     </Text>
                     <Input
-                        label="B方运动员2"
-                        placeholder='运动员B2'
+                        style={styles.playerInput}
+                        placeholder={this.props.previousData.playerB2}
                         onChangeText={(text)=>this.setState({playerB2:text})}
                     />
                 </View>
@@ -147,37 +151,46 @@ export default class AnnotationTableSingle1 extends Component {
         }
     return (
       <View style={styles.container}>
+        <ScrollView>
+
+            <View style={styles.row}>
+                <Text style={styles.label}>
+                  比赛时间
+              </Text>
+                 <TouchableOpacity onPress={this.showDateTimePicker}>
+                     <Text style={styles.input}>
+                         {this.formattedDate()}
+                         </Text>
+                 </TouchableOpacity>
+            </View>
 
 
-          <Button title={this.formattedDate()}
-                  onPress={this.showDateTimePicker}
-                  type="outline"
-          />
+
 
           <DateTimePicker
               isVisible={this.state.isDateTimePickerVisible}
               onConfirm={this.handleDatePicked}
               onCancel={this.hideDateTimePicker}
-
           />
 
 
           <View style={styles.row}>
-              <Text>
+              <Text style={styles.label}>
                   比赛地点
               </Text>
               <Input
-                  label="比赛地点"
-                  placeholder='北京'
+                  style={styles.input}
+                  placeholder={this.props.previousData.place}
                   onChangeText={(text)=>this.setState({place:text})}
               />
           </View>
 
           <View style={styles.row}>
 
-              <Text>
+              <Text style={styles.label}>
                   比赛类型
               </Text>
+              <View style={styles.entryContainer}>
 
               <Picker
                   selectedValue={this.state.type}
@@ -198,18 +211,21 @@ export default class AnnotationTableSingle1 extends Component {
                   <Picker.Item label="欧亚对抗赛" value="asia-europe" />
                   <Picker.Item label="其他" value="others" />
               </Picker>
+                  </View>
 
           </View>
 
 
           <View style={styles.row}>
 
-              <Text>
+              <Text style={styles.label}>
                   比赛项目
               </Text>
 
+              <View style={styles.entryContainer}>
               <Picker
                   selectedValue={this.state.entry}
+                  itemStyle={{  textAlign: 'right', fontSize: 14, right:0 }}
                   style={styles.entryPicker}
                   onValueChange={(itemValue, itemIndex) =>
                       this.setState({entry: itemValue})
@@ -225,13 +241,15 @@ export default class AnnotationTableSingle1 extends Component {
                   <Picker.Item label="混双" value="double-mixed" />
               </Picker>
 
+              </View>
           </View>
           <View style={styles.row}>
 
-              <Text>
+              <Text style={styles.label}>
                   比赛项目
               </Text>
 
+              <View style={styles.entryContainer}>
               <Picker
                   selectedValue={this.state.round}
                   style={styles.entryPicker}
@@ -249,20 +267,42 @@ export default class AnnotationTableSingle1 extends Component {
                   <Picker.Item label="其他" value="others" />
               </Picker>
 
+              </View>
           </View>
 
-          <Divider/>
+          <Divider style={styles.divider1}/>
+
 
           {playersInput}
+          <Divider style={styles.divider2}/>
+
+
+          <Button onPress={this._onSubmit} style={styles.submit} title={"提交"}/>
 
 
 
-
-
+</ScrollView>
       </View>
+
     );
   }
-};
+}
+
+function mapStateToProps(state) {
+  return {
+    previousData: state.annotatingTable1.metaData,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    submitSettingUp: (settings) => dispatch(setUpTable(settings))
+  }
+}
+
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(AnnotationSettingUp)
 
 const styles = StyleSheet.create({
     container: {
@@ -273,14 +313,63 @@ const styles = StyleSheet.create({
         paddingRight: 30,
       },
     entryPicker:{
-        width: "100%",
-        height: 50,
+
     },
     entryContainer:{
+        height: 50,
+        right: 0,
+        width: "70%",
 
     },
 
     row:{
-      flexDirection: "row"
-    }
-})
+      flexDirection: "row",
+        paddingBottom: 8,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 50,
+        fontSize: 14,
+    },
+    submit: {
+        height: "60px",
+        width: "100%",
+        marginTop: 30,
+    },
+    input: {
+      textAlign: "left",
+        fontSize: 16,
+        textAlignVertical:"bottom",
+        paddingBottom: 0,
+    },
+    label: {
+        textAlignVertical:"bottom",
+        // paddingRight: 10,
+        // flex: 5,
+        // flexShrink: 1,
+        flexGrow: 2,
+        width: "30%",
+        fontSize: 16,
+
+    },
+    playerInput: {
+        // flex: 3,
+
+        width: "70%",
+        textAlignVertical:"bottom",
+        paddingBottom: 0,
+        alignItems: "flex-end",
+        fontSize: 16,
+
+
+        // flexShrink: 3,
+        // flexGrow: 3,
+    },
+    divider1: {
+        marginTop: 10,
+        marginBottom: 25,
+    },
+    divider2: {
+        marginTop: 10,
+        marginBottom: 35,
+    },
+});

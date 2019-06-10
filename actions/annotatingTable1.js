@@ -9,3 +9,11 @@ export const addOneInTable1 = (key) => ({
     key:key,
 });
 
+export const setUpTable = (settings) => ({
+    type: "SET_UP_TABLE",
+    settings,
+});
+
+export const backToSettingUp = ()=>({
+   type: "BACK_TO_SETTING_UP"
+});

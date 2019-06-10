@@ -5,3 +5,7 @@ export function loginAction(payload){
         return false;
     }
 }
+
+export function submitAnnotation(payload) {
+    return true;
+}
