@@ -2,13 +2,11 @@ import React, {Component} from 'react';
 import {View, Text,  StyleSheet, Alert, TouchableOpacity} from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { Table, Row, Rows, Cell, TableWrapper, Col, Cols } from 'react-native-table-component';
+import {connect} from 'react-redux'
+import {initTableOne, addOneInTable1} from "../actions/annotatingTable1";
 
 
-export default class Annotation extends Component {
-
-
-
-
+class AnnotationTableSingle1 extends Component {
 
 
     constructor(props) {
@@ -22,7 +20,7 @@ export default class Annotation extends Component {
         );
 
         const leftRowTouchableElement =  (value) => (
-            <TouchableOpacity  onPress={() => this._alertIndex(value)}>
+            <TouchableOpacity  onPress={() => this.props.addOne("serviceScore",)}>
                 <View style={styles.leftRowElement}>
                     <Text style={styles.btnText}>{value}</Text>
                 </View>
@@ -62,13 +60,50 @@ export default class Annotation extends Component {
             <Row data ={[leftRowTouchableElement(i), rightRowTouchableElement(j)]} style={styles.rowPair} textStyle={styles.text} borderStyle={{borderColor: 'transparent'}}/>
         );
 
-
+        let sum = 0;
+        for(let key of Object.keys(this.props.tableData)){
+            sum += this.props.tableData[key]
+        }
+        sum = sum >0 ? sum: 1;
+        let stageUsage = {
+            attackAfterService: this.props.tableData.serviceScore + this.props.tableData.serviceLose +
+                this.props.tableData.thirdStrokeLose + this.props.tableData.thirdStrokeScore,
+            attackAfterServiceReception: this.props.tableData.serviceReceptionScore + this.props.tableData.serviceReceptionLose +
+                this.props.tableData.forthStrokeLose + this.props.tableData.forthStrokeScore ,
+            sustainedRally: this.props.tableData.forthStrokeScore + this.props.tableData.forthStrokeLose,
+        };
+        for( let key of Object.keys(stageUsage)){
+            stageUsage[key] = stageUsage[key] > 0?stageUsage[key]:1;
+        }
+        let stageRatio = {
+            attackAfterService:{
+                score: (this.props.tableData.serviceScore + this.props.tableData.thirdStrokeScore) / stageUsage.attackAfterService,
+                usage: stageUsage.attackAfterService / sum,
+            },
+            attackAfterServiceReception:{
+                score: (this.props.tableData.serviceReceptionScore + this.props.tableData.forthStrokeScore) / stageUsage.attackAfterServiceReception,
+                usage:  stageUsage.attackAfterServiceReception  / sum
+            },
+            sustainedRally: {
+                score: this.props.tableData.fifthStrokeLaterScore /  (this.props.tableData.fifthStrokeLaterScore + this.props.tableData.fifthStrokeLaterLose > 0? this.props.tableData.fifthStrokeLaterScore + this.props.tableData.fifthStrokeLaterLose:1),
+                usage: this.props.tableData.fifthStrokeLaterScore + this.props.tableData.fifthStrokeLaterLose / sum
+            }
+        }
         this.state = {
             tableTitle: ['Title', 'Title2', 'Title3', 'Title4'],
             tableData: [
-                ['发球抢攻段', rowTextPair("发球", '第三拍'),rowTouchablePair(2,3), rowTouchablePair(2,3), 'c', 'd'],
-                ['接发球抢攻段',rowTextPair("接发球", '第四拍'), rowTouchablePair(2,3), rowTouchablePair(2,3), 'c', 'd'],
-                ['相持段','第五拍及以后', 'a', "S", 'c', 'd'],
+                ['发球抢攻段', rowTextPair("发球", '第三拍'),
+                    rowTouchablePair("thirdStrokeScore","thirdStrokeLose"), // data
+                    rowTouchablePair(this.props.tableData.serviceLose,this.props.tableData.thirdStrokeLose),
+                    stageRatio.attackAfterService.score, stageRatio.attackAfterService.usage,
+                    ],
+                ['接发球抢攻段',rowTextPair("接发球", '第四拍'),
+                     rowTouchablePair(this.props.tableData.serviceReceptionScore,this.props.tableData.forthStrokeScore), // data
+                     rowTouchablePair(this.props.tableData.serviceReceptionLose,this.props.tableData.forthStrokeLose), // data
+                    stageRatio.attackAfterServiceReception.score, stageRatio.attackAfterServiceReception.usage],
+                ['相持段','第五拍及以后',
+                    this.props.tableData.fifthStrokeLaterScore, this.props.tableData.fifthStrokeLaterLose,
+                    stageRatio.sustainedRally.score, stageRatio.sustainedRally.usage],
             ],
 
         }
@@ -137,11 +172,12 @@ export default class Annotation extends Component {
 
     return (
       <View style={styles.container}>
+          <Text>{this.props.tableData.serviceScore}</Text>
         <Table style={{flexDirection: 'row'}}>
           {/* Left Wrapper */}
           <TableWrapper style={{width: 80}}>
             <TableWrapper style={{flexDirection: 'row'}}>
-              <Col data={['A','得分', '失分', '得分率', '失分率']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
+              <Col data={['A','得分', '失分', '得分率', '使用率']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
             </TableWrapper>
           </TableWrapper>
 
@@ -155,7 +191,25 @@ export default class Annotation extends Component {
       </View>
     );
   }
-};
+}
+
+function mapStateToProps(state) {
+  return {
+    tableData: state.annotatingTable1.tableData,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    initTable: () => dispatch(initTableOne()),
+      addOne: (key) => dispatch(addOneInTable1(key))
+  }
+}
+
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(AnnotationTableSingle1)
+
 
 const styles = StyleSheet.create({
 

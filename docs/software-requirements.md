@@ -25,6 +25,10 @@ For annotators who need to use mobile phones to annotate the data in table-tenni
 |2.2 | Annotation 2| annotate | annotation 2 |
 |3| User | Explore | Open | Check |
 
+### Annotate 1
+- Annotator log one
+- Annotator ends
+-
 
 ### Overview
 

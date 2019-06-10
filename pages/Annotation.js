@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text,  StyleSheet, Alert} from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import AnnotationSettingUp from '../components/AnnotationSettingUp'
-
+import AnnotationTableSingle1 from '../components/AnnotationTableSingle1'
 
 export default class Annotation extends Component {
 
@@ -19,7 +19,8 @@ export default class Annotation extends Component {
         width: "100%",
         height: "100%",
       }}>
-          <AnnotationSettingUp/>
+
+          <AnnotationTableSingle1/>
       </View>
     );
   }

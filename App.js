@@ -8,7 +8,9 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import combineReducers from './reducers/index'
 // Import pages
 import Login from './pages/Login'
 import Overview from './pages/Overview'
@@ -36,9 +38,29 @@ const MainNavigator = createStackNavigator({
 
 });
 
-const App = createAppContainer(MainNavigator);
+const AppNavigator = createAppContainer(MainNavigator)
+const store = createStore(combineReducers);
 
-export default App
+export default class App extends React.Component {
+  constructor(props) {
+    super(props)
+    // ...
+  }
+
+  render() {
+    return (
+      <Provider store={ store }>
+        <AppNavigator
+        />
+      </Provider>
+    );
+  }
+}
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
