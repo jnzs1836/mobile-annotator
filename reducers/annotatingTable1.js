@@ -13,7 +13,6 @@ const initialTable = {
             fifthStrokeLaterLose: 0,
         },
     metaData:{
-        place: "未设定"
     },
     status: "SETTING_UP"
 };
@@ -36,10 +35,7 @@ const annotatingTable1 = (state = initialTable , action) => {
           return initialTable;
       case "SET_UP_TABLE":
           return {
-              ...initialTable,
-              metaData:{
-                  ...action.settings
-              },
+              ...state,
               status: "ANNOTATING",
           };
 
@@ -47,6 +43,14 @@ const annotatingTable1 = (state = initialTable , action) => {
           return {
               ...state,
               status: "SETTING_UP"
+          };
+      case "SET_META_DATA_ITEM":
+          return {
+              ...state,
+              metaData:{
+                  ...state.metaData,
+                  ...action.item,
+              },
           };
       default:
           return state

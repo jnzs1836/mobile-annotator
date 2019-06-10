@@ -9,11 +9,15 @@ export const addOneInTable1 = (key) => ({
     key:key,
 });
 
-export const setUpTable = (settings) => ({
+export const setUpTable = () => ({
     type: "SET_UP_TABLE",
-    settings,
 });
 
 export const backToSettingUp = ()=>({
    type: "BACK_TO_SETTING_UP"
 });
+
+export const setMetaDataItem = (item)=>({
+    type: "SET_META_DATA_ITEM",
+    item: item
+})

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text,  StyleSheet, Alert, Picker, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import { Divider,  Input, Button } from 'react-native-elements';
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { addOneInTable1, initTableOne, setUpTable } from "../actions/annotatingTable1";
+import { addOneInTable1, initTableOne, setUpTable, setMetaDataItem } from "../actions/annotatingTable1";
 import { connect } from "react-redux";
 
 
@@ -29,7 +29,7 @@ class AnnotationSettingUp extends Component {
             playerB1: "运动员B1",
             playerA2: "运动员A2",
             playerB2: "运动员B2",
-            ...this.props.previousData,
+            ...this.props.data,
         };
     }
 
@@ -43,10 +43,10 @@ class AnnotationSettingUp extends Component {
         }
     }
     _isSingleGame(){
-        if(this.state.entry === 'single-man' ||
-            this.state.entry === 'single-woman' ||
-            this.state.entry === 'single-man-in-team' ||
-            this.state.entry === 'single-woman-in-team'
+        if(this.props.data.entry === 'single-man' ||
+            this.props.data.entry === 'single-woman' ||
+            this.props.data.entry === 'single-man-in-team' ||
+            this.props.data.entry === 'single-woman-in-team'
         ){
             return true;
         }else{
@@ -87,8 +87,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.input}
-                        placeholder={this.props.previousData.playerA1}
-                        onChangeText={(text)=>this.setState({playerA1:text})}
+                        defaultValue={this.props.data.playerA1}
+                        onChangeText={(text)=>this.props.set({playerA1:text})}
                     />
                 </View>
                 <View style={styles.row}>
@@ -97,8 +97,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.playerInput}
-                        placeholder={this.props.previousData.playerB1}
-                        onChangeText={(text)=>this.setState({playerB1:text})}
+                        defaultValue={this.props.data.playerB1}
+                        onChangeText={(text)=>this.props.set({playerB1:text})}
                     />
                 </View>
             </View>
@@ -110,8 +110,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.playerInput}
-                        placeholder={this.props.previousData.playerA1}
-                        onChangeText={(text)=>this.setState({playerA1:text})}
+                        defaultValue={this.props.data.playerA1}
+                        onChangeText={(text)=>this.props.set({playerA1:text})}
 
 
                     />
@@ -122,8 +122,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.playerInput}
-                        placeholder={this.props.previousData.playerA2}
-                        onChangeText={(text)=>this.setState({playerA2:text})}
+                        defaultValue={this.props.data.playerA2}
+                        onChangeText={(text)=>this.props.set({playerA2:text})}
 
                     />
                 </View>
@@ -133,8 +133,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.playerInput}
-                        placeholder={this.props.previousData.playerB1}
-                        onChangeText={(text)=>this.setState({playerB1:text})}
+                        defaultValue={this.props.data.playerB1}
+                        onChangeText={(text)=>this.props.set({playerB1:text})}
                     />
                 </View>
                 <View style={styles.row}>
@@ -143,8 +143,8 @@ class AnnotationSettingUp extends Component {
                     </Text>
                     <Input
                         style={styles.playerInput}
-                        placeholder={this.props.previousData.playerB2}
-                        onChangeText={(text)=>this.setState({playerB2:text})}
+                        defaultValue={this.props.data.playerB2}
+                        onChangeText={(text)=>this.props.set({playerB2:text})}
                     />
                 </View>
             </View>
@@ -180,8 +180,8 @@ class AnnotationSettingUp extends Component {
               </Text>
               <Input
                   style={styles.input}
-                  placeholder={this.props.previousData.place}
-                  onChangeText={(text)=>this.setState({place:text})}
+                  defaultValue={this.props.data.place}
+                  onChangeText={(text)=>this.props.set({place:text})}
               />
           </View>
 
@@ -193,10 +193,10 @@ class AnnotationSettingUp extends Component {
               <View style={styles.entryContainer}>
 
               <Picker
-                  selectedValue={this.state.type}
+                  selectedValue={this.props.data.type}
                   style={styles.entryPicker}
                   onValueChange={(itemValue, itemIndex) =>
-                      this.setState({type: itemValue})
+                      this.props.set({type: itemValue})
                   }>
                   <Picker.Item label="公开赛" value="championships" />
                   <Picker.Item label="世乒赛" value="ittf-worlds" />
@@ -224,11 +224,11 @@ class AnnotationSettingUp extends Component {
 
               <View style={styles.entryContainer}>
               <Picker
-                  selectedValue={this.state.entry}
+                  selectedValue={this.props.data.entry}
                   itemStyle={{  textAlign: 'right', fontSize: 14, right:0 }}
                   style={styles.entryPicker}
                   onValueChange={(itemValue, itemIndex) =>
-                      this.setState({entry: itemValue})
+                      this.props.set({entry: itemValue})
                   }>
                   <Picker.Item label="男团单打" value="single-man-in-team" />
                   <Picker.Item label="男团双打" value="single-men-in-team" />
@@ -251,10 +251,10 @@ class AnnotationSettingUp extends Component {
 
               <View style={styles.entryContainer}>
               <Picker
-                  selectedValue={this.state.round}
+                  selectedValue={this.props.data.round}
                   style={styles.entryPicker}
                   onValueChange={(itemValue, itemIndex) =>
-                      this.setState({round: itemValue})
+                      this.props.set({round: itemValue})
                   }>
                   <Picker.Item label="决赛" value="final" />
                   <Picker.Item label="半决赛" value="semi-final" />
@@ -274,10 +274,6 @@ class AnnotationSettingUp extends Component {
 
 
           {playersInput}
-          <Divider style={styles.divider2}/>
-
-
-          <Button onPress={this._onSubmit} style={styles.submit} title={"提交"}/>
 
 
 
@@ -288,21 +284,11 @@ class AnnotationSettingUp extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    previousData: state.annotatingTable1.metaData,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    submitSettingUp: (settings) => dispatch(setUpTable(settings))
-  }
-}
 
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(AnnotationSettingUp)
+
+export default AnnotationSettingUp;
 
 const styles = StyleSheet.create({
     container: {

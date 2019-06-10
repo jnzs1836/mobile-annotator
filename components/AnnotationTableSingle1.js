@@ -15,12 +15,6 @@ class AnnotationTableSingle1 extends Component {
         this.state = {
             tableTitle: ['Title', 'Title2', 'Title3', 'Title4'],
         }
-
-
-
-
-
-
     }
 
 
@@ -29,20 +23,9 @@ class AnnotationTableSingle1 extends Component {
 
 
         // go back to edit the meta data
-        const _backToEditMeta = (event)=>{
-            this.props.back();
-        };
 
-
-        const _onSave = (event) => {
-            if(submitAnnotation({})){
-                alert("Save Successful")
-                this.props.navigation.navigate('Home')
-
-            }else{
-                alert("something wrong")
-            }
-        };
+      // convert 0.04 => 4%
+      const formatFloat = (value) => (100 * value).toFixed(0) + "%" ;
         const elementButton = (value) => (
             <TouchableOpacity onPress={() => this._alertIndex(value)}>
                 <View style={styles.btn}>
@@ -66,7 +49,7 @@ class AnnotationTableSingle1 extends Component {
             <View style={styles.rightRowElement}>
                 <TouchableOpacity  onPress={() => this.props.addOne(key)}>
                     <View >
-                        <Text style={styles.btnText}>{this.props.tableData[key]}</Text>
+                        <Text style={styles.btnText}>{ this.props.tableData[key]}</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -89,6 +72,7 @@ class AnnotationTableSingle1 extends Component {
                 </Text>
             </View>
         )
+
 
         const rowTextPair = (i,j)=>(
             <Row data ={[leftRowTextElement(i), rightRowTextElement(j)]} style={styles.rowPair} textStyle={styles.text} borderStyle={{borderColor: 'transparent'}}/>
@@ -132,15 +116,15 @@ class AnnotationTableSingle1 extends Component {
                 ['发球抢攻段', rowTextPair("发球", '第三拍'),
                     rowTouchablePair("thirdStrokeScore","thirdStrokeLose"), // data
                     rowTouchablePair("serviceLose","thirdStrokeLose"),
-                    stageRatio.attackAfterService.score, stageRatio.attackAfterService.usage,
+                    formatFloat(stageRatio.attackAfterService.score), formatFloat(stageRatio.attackAfterService.usage),
                     ],
                 ['接发球抢攻段',rowTextPair("接发球", '第四拍'),
                      rowTouchablePair("serviceReceptionScore","forthStrokeScore"), // data
                      rowTouchablePair("serviceReceptionLose","forthStrokeLose"), // data
-                    stageRatio.attackAfterServiceReception.score, stageRatio.attackAfterServiceReception.usage],
+                    formatFloat(stageRatio.attackAfterServiceReception.score), formatFloat(stageRatio.attackAfterServiceReception.usage)],
                 ['相持段','第五拍及以后',
                     rightRowTouchableElement("fifthStrokeLaterScore"), rightRowTouchableElement("fifthStrokeLaterLose"),
-                    stageRatio.sustainedRally.score, stageRatio.sustainedRally.usage],
+                    formatFloat(stageRatio.sustainedRally.score), formatFloat(stageRatio.sustainedRally.usage)],
             ];
         // Define the heights of cells in the table
         const tableHeight = {
@@ -190,48 +174,17 @@ class AnnotationTableSingle1 extends Component {
           </TableWrapper>
         </Table>
 
-          <View style={styles.buttonGroup}>
-                  <TouchableOpacity style={styles.bottomBtnView} onPress={() => _backToEditMeta()}>
-                      <View >
-                          <Text style={styles.bottomBtnText}>返回</Text>
-                      </View>
-                  </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.bottomBtnView} onPress={() => _onSave()}>
-                      <View >
-                          <Text style={styles.bottomBtnText}>提交</Text>
-                      </View>
-                  </TouchableOpacity>
-
-              {/*<Button style={{width:300}} title={"           返回           "}/>*/}
-              {/*<Button style={styles.bottomButton} title={"           提交           "}/>*/}
-
-
-          </View>
        </View>
 
     );
   }
 }
 
-//32 137 224
-function mapStateToProps(state) {
-  return {
-    tableData: state.annotatingTable1.tableData,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    initTable: () => dispatch(initTableOne()),
-      addOne: (key) => dispatch(addOneInTable1(key)),
-      back: ()=>dispatch(backToSettingUp()),
-  }
-}
 
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(AnnotationTableSingle1)
+export default AnnotationTableSingle1
 
 
 const styles = StyleSheet.create({
@@ -249,47 +202,16 @@ const styles = StyleSheet.create({
     text: { textAlign: 'center' },
 
     leftRowElement:{
-        width: "100%", height: "100%", backgroundColor: '#c8e1ff', borderRightWidth:1
+        width: "100%", height: "100%", backgroundColor: '#c8e1ff', borderRightWidth:1, justifyContent: "center"
     },
     rightRowElement:{
-        width: "100%", height: "100%", backgroundColor: '#c8e1ff'
+        width: "100%", height: "100%", backgroundColor: '#c8e1ff',  justifyContent: "center"
     },
-    btn: { width: "100%", height: "100%", backgroundColor: '#c8e1ff', borderRightWidth:0 },
+    btn: { width: "100%", height: "100%", backgroundColor: '#c8e1ff', borderRightWidth:0, textAlign:"center", textAlignVertical:"center" },
 
     btnText: { textAlign: 'center' },
 
-    buttonGroup: {
-        paddingTop: 40,
-        paddingLeft: 15,
-        paddingRight: 15,
-        margin: 0,
-        flexDirection: "row",
-        width: "100%",
-        alignItems: "center"
-    },
-    bottomBtnContainer:{
 
-    },
-    bottomBtnView: {
-        width: "50%",
-        height: 40,
-        backgroundColor: '#2089e0',
-        borderRightWidth:0,
-        flex:1,
-        flexShrink: 2,
-        borderRadius: 2,
-        alignItems: "center",
-        flexDirection: "column",
-        textAlignVertical: "center",
-        padding: 10,
-        margin: 10,
-    },
-
-    bottomBtnText:{
-        textAlignVertical: "center",
-        textAlign: 'center',
-        color: "white",
-    },
     rowPair:{
         width: "100%",
         height: "100%",
