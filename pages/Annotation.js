@@ -3,6 +3,7 @@ import {View, Text,  StyleSheet, Alert, Modal, TouchableOpacity} from 'react-nat
 import { Input, Button } from 'react-native-elements';
 import AnnotationSettingUp from '../components/AnnotationSettingUp'
 import AnnotationTableSingle1 from '../components/AnnotationTableSingle1'
+import AnnotationTableDouble1 from '../components/AnnotationTableDouble1'
 import {
     addOneInTable1,
     backToSettingUp,
@@ -22,6 +23,18 @@ class Annotation extends Component {
     }
 
   render() {
+
+        const _isSingleGame = (entry) => {
+        if(entry === 'single-man' ||
+            entry === 'single-woman' ||
+            entry === 'single-man-in-team' ||
+            entry === 'single-woman-in-team'
+        ){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
         // Left button on the bottom
@@ -49,8 +62,20 @@ class Annotation extends Component {
         };
         const modalContent =
             //
-            this.props.status !== "ANNOTATING"? (<AnnotationSettingUp data={this.props.metaData} set={this.props.setMetaDataItem}/>): (
+            this.props.status !== "ANNOTATING"? (<AnnotationSettingUp data={this.props.metaData} set={this.props.setMetaDataItem}/>):
+
+                _isSingleGame(this.props.metaData.entry)?
+
+                (
                     <AnnotationTableSingle1
+                        initTable={this.props.initTableOne}
+                        addOne={this.props.mutateTableOne}
+                        navigation={this.props.navigation}
+                        tableData={ this.props.tableOneData}
+                    />
+                    ):
+                    (
+                      <AnnotationTableDouble1
                         initTable={this.props.initTableOne}
                         addOne={this.props.mutateTableOne}
                         navigation={this.props.navigation}

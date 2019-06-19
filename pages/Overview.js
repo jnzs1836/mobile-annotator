@@ -1,8 +1,16 @@
 import React, {Component} from 'react';
-import {View, Text,  StyleSheet, Alert} from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import {View, Text,  StyleSheet, Alert, ScrollView, FlatList} from 'react-native';
+import { Input, Button, ListItem, Divider } from 'react-native-elements';
+import {connect} from 'react-redux';
+import {
+    addOneInTable1,
+    backToSettingUp,
+    initTableOne,
+    setMetaDataItem,
+    setUpTable
+} from "../actions/annotatingTable1";
 
-export default class Overview extends Component {
+class Overview extends Component {
 
     constructor(props) {
         super(props);
@@ -11,6 +19,19 @@ export default class Overview extends Component {
     }
 
   render() {
+
+
+        let keyExtractor = (item, index) => index.toString()
+
+      const renderItem = ({ item }) => (
+          <ListItem
+                          title={item.name}
+                          subtitle={item.date}
+                          bottomDivider={true}
+
+                      />
+          )
+
     return (
       <View style={{
         flex: 1,
@@ -24,14 +45,41 @@ export default class Overview extends Component {
           >
 
           </Button>
+          <Divider/>
+          <FlatList
+              keyExtractor={keyExtractor}
+              data={this.props.matches}
+              renderItem={renderItem}
+          />
+
+
       </View>
     );
   }
 };
 
+
+
+function mapStateToProps(state) {
+  return {
+      matches: state.annotationList.list,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Overview)
+
 const styles = StyleSheet.create({
     annotateOne: {
         width:"100%",
         height:100,
+    },
+    item:{
+
     }
 })

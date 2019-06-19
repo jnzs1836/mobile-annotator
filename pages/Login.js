@@ -18,7 +18,7 @@ export default class Login extends Component {
 
 
     static navigationOptions = {
-        title: 'Welcome',
+        // title: 'Welcome',
     };
 
 

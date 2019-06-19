@@ -12,3 +12,9 @@ Reinstall the packages
 
 ### align
 center
+
+alignItems - alignSelf
+
+justifyContent
+
+###

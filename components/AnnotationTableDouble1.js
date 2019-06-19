@@ -5,7 +5,7 @@ import { Table, Row, Rows, Cell, TableWrapper, Col, Cols } from 'react-native-ta
 import {initTableOne, addOneInTable1, backToSettingUp} from "../actions/annotatingTable1";
 import {submitAnnotation} from '../api'
 
-class AnnotationTableSingle1 extends Component {
+class AnnotationTableDouble1 extends Component {
 
 
     constructor(props) {
@@ -112,16 +112,16 @@ class AnnotationTableSingle1 extends Component {
 
 
         let tableData =  [
-                ['发球抢攻段', rowTextPair("发球", '第三拍'),
-                    rowTouchablePair("thirdStrokeScore","thirdStrokeLose"), // data
-                    rowTouchablePair("serviceLose","thirdStrokeLose"),
+                ['发球/第三拍', rowTextPair("得分", '失分'),
+                    rowTouchablePair("playerA1ScoreService","playerA1LoseService"), // data
+                    rowTouchablePair("playerB1ScoreService","playerB1LoseService"),
                     formatFloat(stageRatio.attackAfterService.score), formatFloat(stageRatio.attackAfterService.usage),
                     ],
-                ['接发球抢攻段',rowTextPair("接发球", '第四拍'),
+                ['相持',rowTextPair("接发球", '第四拍'),
                      rowTouchablePair("serviceReceptionScore","forthStrokeScore"), // data
                      rowTouchablePair("serviceReceptionLose","forthStrokeLose"), // data
                     formatFloat(stageRatio.attackAfterServiceReception.score), formatFloat(stageRatio.attackAfterServiceReception.usage)],
-                ['相持段','第五拍及以后',
+                ['合计',rowTextPair("得分", '失分'),
                     rightRowTouchableElement("fifthStrokeLaterScore"), rightRowTouchableElement("fifthStrokeLaterLose"),
                     formatFloat(stageRatio.sustainedRally.score), formatFloat(stageRatio.sustainedRally.usage)],
             ];
@@ -161,7 +161,7 @@ class AnnotationTableSingle1 extends Component {
           {/* Left Wrapper */}
           <TableWrapper style={{width: 80}}>
             <TableWrapper style={{flexDirection: 'row'}}>
-              <Col data={['A','得分', '失分', '得分率', '使用率']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
+              <Col data={['A','GOD', '失分', '得分率', '使用率']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
             </TableWrapper>
           </TableWrapper>
 
@@ -183,7 +183,7 @@ class AnnotationTableSingle1 extends Component {
 
 
 
-export default AnnotationTableSingle1
+export default AnnotationTableDouble1
 
 
 const styles = StyleSheet.create({

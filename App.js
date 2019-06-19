@@ -32,9 +32,9 @@ type Props = {};
 
 // Create a navigator
 const MainNavigator = createStackNavigator({
-    Annotating: {screen: Annotation},
     Login: {screen: Login},
     Home: {screen: Overview},
+    Annotating: {screen: Annotation},
 
 });
 
