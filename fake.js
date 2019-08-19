@@ -40,7 +40,7 @@ const initialTable = {
 };
 let matchData = {
 
-    metaData:{
+    metaData: {
         playerA1: "A",
         playerB1: "B",
         place: "广州",
@@ -48,9 +48,9 @@ let matchData = {
         type: "世锦赛",
         entry: "single-man",
         round: 'final',
-        year:2019,
-        month:7,
-        day:15,
+        year: 2019,
+        month: 7,
+        day: 15,
 
     },
 
@@ -64,6 +64,29 @@ let matchData = {
 
 };
 
-export async function getFakeMatchData() {
+
+const fakeMeta = {
+    date: '07/15/2019',
+    name: "广州--2018--运动员A 3:0 运动员B",
+    place: "广州",
+    type: "",
+    // double singe men women mixed
+    entry: "世锦赛",
+    round: "决赛",
+    playerA1: "A",
+    playerB1: "B",
+}
+
+export function getFakeMatchData() {
     return matchData;
+}
+
+
+export function getFakeMatchList() {
+    return [
+        fakeMeta,
+        fakeMeta,
+        fakeMeta,
+        fakeMeta
+    ]
 }

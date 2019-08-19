@@ -1,4 +1,4 @@
-import {getFakeMatchData} from 'fake'
+import {getFakeMatchData, getFakeMatchList} from 'fake'
 
 
 export function loginAction(payload){
@@ -14,10 +14,17 @@ export function submitAnnotation(payload) {
 }
 
 
-export function fetchMatch({matchId}){
+export async function fetchMatch({matchId}){
     let data = getFakeMatchData();
     return {
         id: 0,
         data: data,
+    }
+}
+
+export async function fetchMatchList() {
+    let data = getFakeMatchList()
+    return {
+        data: data
     }
 }

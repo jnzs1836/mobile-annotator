@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text,  StyleSheet, Alert, ScrollView, FlatList} from 'react-native';
 import { Input, Button, ListItem, Divider } from 'react-native-elements';
 import {connect} from 'react-redux';
+import {fetchMatchList} from '../api'
 import {
     addOneInTable1,
     backToSettingUp,
@@ -37,6 +38,11 @@ class Overview extends Component {
 
                       />
           )
+      fetchMatchList().then(res=>{
+          this.setState({
+              matches: res.data
+          })
+      })
 
     return (
       <View style={{
@@ -54,7 +60,7 @@ class Overview extends Component {
           <Divider/>
           <FlatList
               keyExtractor={keyExtractor}
-              data={this.props.matches}
+              data={this.state.matches}
               renderItem={renderItem}
           />
 
