@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, Text,  StyleSheet, Alert, Picker, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import { Divider,  Input, Button } from 'react-native-elements';
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { addOneInTable1, initTableOne, setUpTable, setMetaDataItem } from "../actions/annotatingTable1";
 import { connect } from "react-redux";
 
 

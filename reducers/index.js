@@ -1,9 +1,14 @@
 import { combineReducers } from 'redux'
-import annotatingTable1 from './annotatingTable1'
+import annotatingSingleTable1 from './annotatingSingleTable1'
+import annotatingDoubleTable1 from './annotatingDoubleTable1'
+import annotatingMetaData from './annotatingMetaData';
 import annotationList from './annotationList'
 
+
 export default combineReducers({
-    annotatingTable1,
+    annotatingSingleTable1: annotatingSingleTable1,
+    annotatingDoubleTable1: annotatingDoubleTable1,
+    annotatingMetaData: annotatingMetaData,
     annotationList,
 })
 

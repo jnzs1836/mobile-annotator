@@ -6,6 +6,16 @@ import { Input, Button } from 'react-native-elements';
 import {loginAction} from '../api'
 
 
+
+
+// Login
+// Description: Login UI
+// state:
+//      user: username user inputs
+//      password: password user inputs
+// api:
+//      It employ loginAction function implemented in api.js
+
 export default class Login extends Component {
 
     constructor(props) {
@@ -16,12 +26,13 @@ export default class Login extends Component {
         };
     }
 
-
     static navigationOptions = {
         // title: 'Welcome',
     };
 
 
+    // _onPressLogin:
+    // Login action, in which loginAction is called.
     _onPressLogin(){
         let signed = loginAction({
             password:"correct"
@@ -110,6 +121,8 @@ export default class Login extends Component {
   }
 };
 
+
+// Styles
 const styles = StyleSheet.create({
     user_name: {
             flex: 1,

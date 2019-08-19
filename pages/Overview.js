@@ -10,6 +10,9 @@ import {
     setUpTable
 } from "../actions/annotatingTable1";
 
+
+
+
 class Overview extends Component {
 
     constructor(props) {
@@ -28,6 +31,9 @@ class Overview extends Component {
                           title={item.name}
                           subtitle={item.date}
                           bottomDivider={true}
+                          onPress={()=>{this.props.navigation.navigate('Home', {
+                              'matchId': item.id,
+                          })}}
 
                       />
           )

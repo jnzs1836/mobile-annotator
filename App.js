@@ -15,7 +15,7 @@ import combineReducers from './reducers/index'
 import Login from './pages/Login'
 import Overview from './pages/Overview'
 import Annotation from './pages/Annotation'
-
+import MatchDisplay from './pages/MatchDisplay'
 
 import {createStackNavigator, createAppContainer} from 'react-navigation';
 
@@ -35,6 +35,7 @@ const MainNavigator = createStackNavigator({
     Login: {screen: Login},
     Home: {screen: Overview},
     Annotating: {screen: Annotation},
+    MatchDisplay: {screen: MatchDisplay}
 
 });
 

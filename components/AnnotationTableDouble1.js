@@ -1,9 +1,16 @@
 import React, {Component} from 'react';
-import {View, Text,  StyleSheet, Alert, TouchableOpacity, Button} from 'react-native';
-import { Input } from 'react-native-elements';
+import {View, Text,  StyleSheet, Alert, TouchableOpacity} from 'react-native';
+import { Input, Button } from 'react-native-elements';
 import { Table, Row, Rows, Cell, TableWrapper, Col, Cols } from 'react-native-table-component';
-import {initTableOne, addOneInTable1, backToSettingUp} from "../actions/annotatingTable1";
+import GameListView from './GameListView'
 import {submitAnnotation} from '../api'
+import { calculateGameScores } from "../utlis/match";
+
+
+
+
+// AnnotationTableDouble1
+// Description: 双打表格记录方法1
 
 class AnnotationTableDouble1 extends Component {
 
@@ -14,13 +21,17 @@ class AnnotationTableDouble1 extends Component {
         this.state = {
             tableTitle: ['Title', 'Title2', 'Title3', 'Title4'],
         }
+        this.props.initTable();
     }
 
+
+  //  Render the interface
 
 
   render() {
 
 
+        let game = 0;
         // go back to edit the meta data
 
       // convert 0.04 => 4%
@@ -33,9 +44,20 @@ class AnnotationTableDouble1 extends Component {
             </TouchableOpacity>
         );
 
+
+        // ------------------------------------------------------------------------------------------------------
+
+        // RowTouchableElement
+        // 表格的基本组成元素，可点击元素
+        // 用于产生点击即加1的表格项
+        // 之所以区分左右,是考虑左右样式不同的原因
+
+
+        // Left touchable element
+        // Generate a touchable element which could be used to record data
         const leftRowTouchableElement =  (key) => (
             <View style={styles.leftRowElement}>
-                <TouchableOpacity  onPress={() => this.props.addOne(key)}>
+                <TouchableOpacity  onPress={() => this.props.addOne(key, this.props.tableData[key]+ 1, game)}>
                 <View>
                     <Text style={styles.btnText}>{this.props.tableData[key]}</Text>
                 </View>
@@ -44,9 +66,11 @@ class AnnotationTableDouble1 extends Component {
 
         );
 
+        // Left touchable element
+        // Generate a touchable element which could be used to record data
         const rightRowTouchableElement =  (key) => (
             <View style={styles.rightRowElement}>
-                <TouchableOpacity  onPress={() => this.props.addOne(key)}>
+                <TouchableOpacity  onPress={() => this.props.addOne(key, this.props.tableData[key]+ 1, game)}>
                     <View >
                         <Text style={styles.btnText}>{ this.props.tableData[key]}</Text>
                     </View>
@@ -54,6 +78,18 @@ class AnnotationTableDouble1 extends Component {
             </View>
         );
 
+
+
+        // ------------------------------------------------------------------------------------------------------------------
+        // RowTextElement
+        // 表格的基本组成元素，文本元素
+        // 用于产生说明性文本表格项
+        // 之所以区分左右,是考虑左右样式不同的原因
+
+      const _onRevert = ()=>{
+          console.log("HELLO WORLD")
+          this.props.revert(game);
+      }
 
         const leftRowTextElement = (value)=> (
 
@@ -73,6 +109,8 @@ class AnnotationTableDouble1 extends Component {
         )
 
 
+        // ----------------------------------------------------------------------------------------
+        // 将两个元素组成为pair
         const rowTextPair = (i,j)=>(
             <Row data ={[leftRowTextElement(i), rightRowTextElement(j)]} style={styles.rowPair} textStyle={styles.text} borderStyle={{borderColor: 'transparent'}}/>
         )
@@ -80,6 +118,11 @@ class AnnotationTableDouble1 extends Component {
             <Row data ={[leftRowTouchableElement(i), rightRowTouchableElement(j)]} style={styles.rowPair} textStyle={styles.text} borderStyle={{borderColor: 'transparent'}}/>
         );
 
+
+
+        // ------------------------------------------------------------------------------------
+        // calculate numbers
+        // 产生计算而成的数字,例如成功率
         let sum = 0;
         for(let key of Object.keys(this.props.tableData)){
             sum += this.props.tableData[key]
@@ -111,39 +154,62 @@ class AnnotationTableDouble1 extends Component {
         }
 
 
-        let tableData =  [
+        let playerA1Score = this.props.tableData.playerA1OpeningScore + this.props.tableData.playerA1SustainedScore;
+        let playerA1Lose = this.props.tableData.playerA1OpeningLose + this.props.tableData.playerA1SustainedLose;
+        let playerA2Score = this.props.tableData.playerA1OpeningScore + this.props.tableData.playerA1SustainedScore;
+        let playerA2Lose = this.props.tableData.playerA2OpeningLose + this.props.tableData.playerA2SustainedLose;
+
+        let openingScore = this.props.tableData.playerA1OpeningScore + this.props.tableData.playerA2OpeningScore
+        let openingLose = this.props.tableData.playerA1OpeningLose + this.props.tableData.playerA2OpeningLose;
+        let sustainedScore = this.props.tableData.playerA1SustainedScore + this.props.tableData.playerA2SustainedScore;
+        let sustainedLose = this.props.tableData.playerA1SustainedLose + this.props.tableData.playerA2SustainedLose
+
+
+        let allScore = openingScore + sustainedScore;
+        let allLose = openingLose + sustainedLose;
+
+      //   -----------------------------------------------------------------------------------------
+
+      // 设置表格布局
+      let tableData =  [
                 ['发球/第三拍', rowTextPair("得分", '失分'),
-                    rowTouchablePair("playerA1ScoreService","playerA1LoseService"), // data
-                    rowTouchablePair("playerB1ScoreService","playerB1LoseService"),
-                    formatFloat(stageRatio.attackAfterService.score), formatFloat(stageRatio.attackAfterService.usage),
+                    rowTouchablePair("playerA1OpeningScore","playerA1OpeningLose"), // data
+                    rowTouchablePair("playerA2OpeningScore","playerA2OpeningLose"),
+                    rowTextPair(openingScore, openingLose),
                     ],
-                ['相持',rowTextPair("接发球", '第四拍'),
-                     rowTouchablePair("serviceReceptionScore","forthStrokeScore"), // data
-                     rowTouchablePair("serviceReceptionLose","forthStrokeLose"), // data
-                    formatFloat(stageRatio.attackAfterServiceReception.score), formatFloat(stageRatio.attackAfterServiceReception.usage)],
+                ['相持',rowTextPair("得分", '失分'),
+                     rowTouchablePair("playerA1SustainedScore","playerA1SustainedLose"), // data
+                     rowTouchablePair("playerA2SustainedScore","playerA2SustainedLose"), // data
+                    rowTextPair(sustainedScore, sustainedLose)],
                 ['合计',rowTextPair("得分", '失分'),
-                    rightRowTouchableElement("fifthStrokeLaterScore"), rightRowTouchableElement("fifthStrokeLaterLose"),
-                    formatFloat(stageRatio.sustainedRally.score), formatFloat(stageRatio.sustainedRally.usage)],
+                    rowTextPair(playerA1Score, playerA1Lose),
+                    rowTextPair(playerA2Score, playerA2Lose),
+                    rowTextPair(allScore, allLose)
+                ]
+            ,
             ];
+
+
+        // ----------------------------------------------------------------------------------------
         // Define the heights of cells in the table
         const tableHeight = {
             firstHead:60,
             secondHead:60,
             scoreRow:60,
-            ratioRow:60,
+            sumRow:60,
         };
 
         const tableCenterHeight =
                 [
                     tableHeight.firstHead, tableHeight.secondHead,
                     tableHeight.scoreRow, tableHeight.scoreRow,
-                    tableHeight.ratioRow, tableHeight.ratioRow
+                    tableHeight.sumRow
                 ];
         const tableLeftSideHeight=
                 [
                     tableHeight.firstHead + tableHeight.secondHead,
                     tableHeight.scoreRow, tableHeight.scoreRow,
-                    tableHeight.ratioRow, tableHeight.ratioRow
+                    tableHeight.sumRow
                 ];
         const state = this.state;
         const element = (data, index) => (
@@ -154,14 +220,19 @@ class AnnotationTableDouble1 extends Component {
             </TouchableOpacity>
         );
 
+        let games = calculateGameScores(this.props.allGamesData, 'double')
+
+
+
+    //   --------------------------------------------------------------------------------
     return (
 
       <View style={styles.container}>
-        <Table style={{flexDirection: 'row', height: 361}}>
+        <Table style={{flexDirection: 'row', height: 301}}>
           {/* Left Wrapper */}
           <TableWrapper style={{width: 80}}>
             <TableWrapper style={{flexDirection: 'row'}}>
-              <Col data={['A','GOD', '失分', '得分率', '使用率']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
+              <Col data={['A',this.props.playerA1, this.props.playerA1, '合计']} style={styles.head} heightArr={tableLeftSideHeight} textStyle={styles.text} />
             </TableWrapper>
           </TableWrapper>
 
@@ -172,6 +243,15 @@ class AnnotationTableDouble1 extends Component {
             {/*<Cols data={state.tableData} heightArr={[40, 30, 30, 30, 30]} textStyle={styles.text}/>*/}
           </TableWrapper>
         </Table>
+
+          <GameListView
+            games={games}
+            teamA={this.props.playerA1 + " " + this.props.playerA2}
+            teamB={this.props.playerB1 + " " + this.props.playerB2}
+            switchGame={this.props.switchGame}
+          />
+
+
 
 
        </View>
@@ -216,5 +296,9 @@ const styles = StyleSheet.create({
         height: "100%",
         elevation:0,
         borderWidth:0
+    },
+
+    revertButton: {
+        marginTop: 30,
     }
 });
